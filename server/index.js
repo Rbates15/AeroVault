@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://aerovault.onrender.com'
+    'https://aerovault-6d0p.onrender.com'
   ]
 }));
 
@@ -38,14 +38,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', app: 'AeroVault', timestamp: new Date().toISOString() });
 });
 
-// ── Centralized error handler (must be last) ─────────────────────────────────
-app.use(errorHandler);
-
-app.listen(PORT, () => {
-  getDb();
-  console.log(`AeroVault server running on http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
 
 // ── Centralized error handler (must be last) ─────────────────────────────────
 app.use(errorHandler);
