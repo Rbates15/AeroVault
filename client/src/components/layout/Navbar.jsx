@@ -272,18 +272,11 @@ function UserDropdown({ onMyTrips }) {
 // ── Navbar ─────────────────────────────────────────────────────────────────────
 export default function Navbar() {
   const { openMyTrips, myTrips } = useApp();
-  const [myTripsVisible, setMyTripsVisible] = useState(false);
 
   function handleOpenMyTrips() {
-    // Measure scrollbar width before locking scroll so CSS variable is set
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
     openMyTrips();
-    setMyTripsVisible(true);
-  }
-
-  function handleCloseMyTrips() {
-    setMyTripsVisible(false);
   }
 
   return (
@@ -317,9 +310,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {myTrips.open && myTripsVisible && (
-        <MyTripsModal onClose={handleCloseMyTrips} />
-      )}
+      {myTrips.open && <MyTripsModal onClose={() => {}} />}
     </>
   );
 }
