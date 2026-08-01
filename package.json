@@ -1,0 +1,28 @@
+{
+  "name": "aerovault",
+  "version": "1.0.0",
+  "description": "AeroVault — a realistic flight-booking demonstration application",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "nodemon server/index.js",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "node server/index.js",
+    "seed": "node server/db/seed.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "nanoid": "^6.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Database (generated at runtime via schema + seed)
+aerovault.db
+aerovault.db-shm
+aerovault.db-wal
+
+# Environment
+.env
+.env.local
+
+# Build output
+client/dist/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

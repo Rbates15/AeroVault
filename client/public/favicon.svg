@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="AeroVault">
+  <title>AeroVault</title>
+
+  <!-- Dark navy background pill — ensures visibility on both light and dark browser tabs -->
+  <rect width="32" height="32" rx="7" fill="#080d1a"/>
+
+  <!-- Shield body — slightly inset from edge for breathing room -->
+  <path
+    d="M6 7 C6 7 16 5 16 5 C16 5 26 7 26 7 L26 19 C26 25.5 16 29 16 29 C16 29 6 25.5 6 19 Z"
+    fill="#0f1629"
+    stroke="#3b82f6"
+    stroke-width="1.8"
+    stroke-linejoin="round"
+  />
+
+  <!-- Wing sweep — simplified single arc, heavier stroke for small-size legibility -->
+  <path
+    d="M9 21 C12 18 14 16 16 15 C18 14 21 14 25 12"
+    stroke="#3b82f6"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Wing tip accent dot -->
+  <circle cx="25" cy="12" r="1.8" fill="#3b82f6"/>
+</svg>
