@@ -38,15 +38,14 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', app: 'AeroVault', timestamp: new Date().toISOString() });
 });
 
-// ── Serve Vite build in production ───────────────────────────────────────────
-if (!isDev) {
-  const clientDist = path.join(__dirname, '..', 'client', 'dist');
-  app.use(express.static(clientDist));
-  // Catch-all: serve index.html for any non-API route (SPA routing)
-  app.get(/^(?!\/api).*$/, (_req, res) => {
-    res.sendFile(path.join(clientDist, 'index.html'));
-  });
-}
+// ── Centralized error handler (must be last) ─────────────────────────────────
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  getDb();
+  console.log(`AeroVault server running on http://localhost:${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
 // ── Centralized error handler (must be last) ─────────────────────────────────
 app.use(errorHandler);
