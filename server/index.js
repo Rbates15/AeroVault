@@ -11,44 +11,55 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { getDb } from './db/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname  = path.dirname(__filename);
 
-const app = express();
-const PORT = process.env.PORT || 3001;
-const isDev = process.env.NODE_ENV !== 'production';
+const app   = express();
+const PORT  = process.env.PORT || 3001;
+const isProd = process.env.NODE_ENV === 'production';
 
-// ── Security & parsing middleware ────────────────────────────────────────────
-app.use(helmet());
+// ── Security & parsing ────────────────────────────────────────────────────────
+app.use(helmet({
+  // Allow Unsplash images in the hero background
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      'img-src': ["'self'", 'data:', 'https://images.unsplash.com'],
+    },
+  },
+}));
 app.use(express.json());
 
-// ── CORS ────────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://aerovault-6d0p.onrender.com'
-  ]
-}));
+// ── CORS: dev only — in production Express serves the built client directly ──
+if (!isProd) {
+  app.use(cors({ origin: 'http://localhost:5173' }));
+}
 
-// ── API routes ───────────────────────────────────────────────────────────────
-app.use('/api/flights', flightRoutes);
+// ── API routes ────────────────────────────────────────────────────────────────
+app.use('/api/flights',  flightRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// ── Health check ─────────────────────────────────────────────────────────────
+// ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', app: 'AeroVault', timestamp: new Date().toISOString() });
 });
 
+// ── Serve Vite build in production ────────────────────────────────────────────
+if (isProd) {
+  const clientDist = path.join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientDist));
 
-// ── Centralized error handler (must be last) ─────────────────────────────────
+  // Catch-all: send index.html for any non-API route (SPA client-side routing)
+  app.get(/^(?!\/api).*$/, (_req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
+
+// ── Centralized error handler (must be last) ──────────────────────────────────
 app.use(errorHandler);
 
 app.listen(PORT, () => {
+  // Initialize DB and run schema on startup
   getDb();
-
-  if (process.env.NODE_ENV === 'production') {
-    console.log('Production database initialized');
-  }
-
   console.log(`AeroVault server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
