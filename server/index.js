@@ -21,10 +21,13 @@ const isDev = process.env.NODE_ENV !== 'production';
 app.use(helmet());
 app.use(express.json());
 
-// ── CORS: allow Vite dev server in development ───────────────────────────────
-if (isDev) {
-  app.use(cors({ origin: 'http://localhost:5173' }));
-}
+// ── CORS ────────────────────────────────────────────────────────────────────
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://aerovault.onrender.com'
+  ]
+}));
 
 // ── API routes ───────────────────────────────────────────────────────────────
 app.use('/api/flights', flightRoutes);
