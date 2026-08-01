@@ -185,7 +185,7 @@ export default function BookingModal({ onClose }) {
   // Fetch trip impact from GET /api/flights/:id
   useEffect(() => {
     if (!flight) return;
-    fetch(`/api/flights/${flight.id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/flights/${flight.id}`)
       .then((r) => r.json())
       .then((d) => { if (d.trip_impact) setTripImpact(d.trip_impact); })
       .catch(() => {});
@@ -224,7 +224,7 @@ export default function BookingModal({ onClose }) {
     setErrors({});
     setSubmitting(true);
     try {
-      const res  = await fetch('/api/bookings', {
+      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({

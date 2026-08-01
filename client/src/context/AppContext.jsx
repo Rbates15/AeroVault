@@ -149,7 +149,7 @@ export function AppProvider({ children }) {
       if (date)        params.set('date',         date);
       params.set('sort', sort);
 
-      const res  = await fetch(`/api/flights?${params.toString()}`);
+      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/flights?${params.toString()}`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error?.message || 'Failed to load flights.');
@@ -164,7 +164,7 @@ export function AppProvider({ children }) {
   const lookupBooking = useCallback(async (code) => {
     dispatch({ type: 'MY_TRIPS_LOADING' });
     try {
-      const res  = await fetch(`/api/bookings/${encodeURIComponent(code.trim().toUpperCase())}`);
+      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/${encodeURIComponent(code.trim().toUpperCase())}`);
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error?.message || 'Booking not found.');
