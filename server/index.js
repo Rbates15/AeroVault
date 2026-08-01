@@ -42,8 +42,8 @@ if (isProd) {
   const clientDist = path.join(__dirname, '..', 'client', 'dist');
   app.use(express.static(clientDist));
 
-  // Catch-all: send index.html for any non-API route (SPA client-side routing)
-  app.get(/^(?!\/api).*$/, (_req, res) => {
+  // SPA catch-all: any GET request that didn't match an API route serves index.html
+  app.use((_req, res) => {
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }
