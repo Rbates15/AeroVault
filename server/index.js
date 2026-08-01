@@ -19,13 +19,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 // ── Security & parsing ────────────────────────────────────────────────────────
 app.use(helmet({
-  // Allow Unsplash images in the hero background
-  contentSecurityPolicy: {
-    directives: {
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      'img-src': ["'self'", 'data:', 'https://images.unsplash.com'],
-    },
-  },
+  contentSecurityPolicy: false, // Disable CSP for demo app — allows Unsplash images and API fetches without issues
 }));
 app.use(express.json());
 
