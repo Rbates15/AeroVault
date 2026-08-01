@@ -6,7 +6,6 @@ import TripImpact from './TripImpact.jsx';
 import ConfirmationCard from '../confirmation/ConfirmationCard.jsx';
 import { formatTime, formatDate, formatDuration, formatPrice } from '../../utils/formatters.js';
 
-// ── Unique IDs for aria wiring ────────────────────────────────────────────────
 const MODAL_TITLE_ID = 'booking-modal-title';
 
 // ── Form field ────────────────────────────────────────────────────────────────
@@ -168,9 +167,10 @@ export default function BookingModal({ onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [tripImpact, setTripImpact] = useState(null);
 
-  const flight      = selectedFlight;
+  // Capture the flight into local state on mount so it remains available
+  // after SET_CONFIRMATION clears selectedFlight in the context.
+  const [flight] = useState(selectedFlight);
   const isConfirmed = !!confirmation;
-
   // Measure scrollbar width then lock scroll
   useEffect(() => {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -185,7 +185,7 @@ export default function BookingModal({ onClose }) {
   // Fetch trip impact from GET /api/flights/:id
   useEffect(() => {
     if (!flight) return;
-    fetch(`${import.meta.env.VITE_API_URL}/api/flights/${flight.id}`)
+    fetch(`/api/flights/${flight.id}`)
       .then((r) => r.json())
       .then((d) => { if (d.trip_impact) setTripImpact(d.trip_impact); })
       .catch(() => {});
@@ -224,7 +224,7 @@ export default function BookingModal({ onClose }) {
     setErrors({});
     setSubmitting(true);
     try {
-      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`, {
+      const res  = await fetch('/api/bookings', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
@@ -236,6 +236,8 @@ export default function BookingModal({ onClose }) {
       });
       const data = await res.json();
       if (!res.ok) { setApiError(data.error?.message || 'Booking failed. Please try again.'); return; }
+      // Store confirmation — this transitions Home to confirmationOpen state.
+      // Do NOT call onClose here; Home.jsx keeps the modal mounted via confirmationOpen.
       setConfirmation(data);
     } catch {
       setApiError('A network error occurred. Please check your connection and try again.');
@@ -244,7 +246,7 @@ export default function BookingModal({ onClose }) {
     }
   }
 
-  if (!flight) return null;
+  if (!flight && !isConfirmed) return null;
 
   return (
     <div

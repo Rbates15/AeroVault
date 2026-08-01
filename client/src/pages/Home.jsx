@@ -9,26 +9,32 @@ import BookingModal from '../components/booking/BookingModal.jsx';
 import { useApp } from '../context/AppContext.jsx';
 
 // ── Hero section ──────────────────────────────────────────────────────────────
+// Photo by Suhyeon Choi on Unsplash (free to use, no attribution required)
+// https://unsplash.com/photos/people-sitting-inside-airplane-NIZeg731LxM
+const HERO_IMAGE = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80';
+
 function Hero() {
   return (
     <section
-      className="relative py-16 md:py-24 overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #080d1a 0%, #0f1d3a 50%, #080d1a 100%)' }}
+      className="relative py-16 md:py-28 overflow-hidden"
       aria-label="AeroVault hero"
     >
-      {/* Subtle background grid texture */}
+      {/* Background photo */}
       <div
-        className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
         aria-hidden="true"
       />
 
+      {/* Dark blue overlay so text stays fully readable */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(to bottom, rgba(10,29,61,0.82) 0%, rgba(15,36,68,0.88) 60%, rgba(15,36,68,0.97) 100%)' }}
+        aria-hidden="true"
+      />
+
+      {/* Content sits above both layers */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Headline */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-av-accent/10 border border-av-accent/20 rounded-full px-4 py-1.5 mb-6">
             <Plane size={13} className="text-av-accent" />
@@ -37,7 +43,7 @@ function Hero() {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-av-text leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
             Travel with{' '}
             <span className="text-av-accent">Confidence.</span>
           </h1>
@@ -48,7 +54,6 @@ function Hero() {
           </p>
         </div>
 
-        {/* Search panel */}
         <div id="search-section" className="max-w-4xl mx-auto">
           <SearchPanel />
         </div>
@@ -66,7 +71,6 @@ function ResultsSection() {
 
   async function handleSortChange(newSort) {
     setSort(newSort);
-    // Re-fetch with the new sort order
     await searchFlights({
       origin:      search.origin,
       destination: search.destination,
@@ -81,7 +85,6 @@ function ResultsSection() {
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in"
       aria-label="Flight search results"
     >
-      {/* Results header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-av-text font-bold text-xl">
@@ -100,12 +103,9 @@ function ResultsSection() {
             </p>
           )}
         </div>
-
-        {/* Sort controls */}
         <SortBar sort={sort} onSort={handleSortChange} />
       </div>
 
-      {/* Flight cards */}
       <FlightList flights={results.flights} />
     </section>
   );
@@ -113,13 +113,23 @@ function ResultsSection() {
 
 // ── Home page ─────────────────────────────────────────────────────────────────
 export default function Home() {
-  const { selectedFlight, deselectFlight, confirmation } = useApp();
+  const { selectedFlight, deselectFlight, confirmation, clearConfirmation } = useApp();
 
-  // Modal is open when a flight is selected OR when confirmation is showing
-  const modalOpen = !!selectedFlight || !!confirmation;
+  // Modal is open when a flight is selected (booking flow)
+  // OR when a confirmation exists (confirmation card).
+  // These are mutually exclusive states in the reducer — keep them independent here.
+  const bookingOpen      = !!selectedFlight;
+  const confirmationOpen = !!confirmation;
+  const modalOpen        = bookingOpen || confirmationOpen;
 
   function handleModalClose() {
-    deselectFlight();
+    // Only clear what is currently active.
+    // Never call both — they are mutually exclusive.
+    if (confirmationOpen) {
+      clearConfirmation();
+    } else {
+      deselectFlight();
+    }
   }
 
   return (
@@ -127,26 +137,21 @@ export default function Home() {
       <Navbar />
 
       <main className="flex-1">
-        {/* Hero + search */}
         <Hero />
 
-        {/* Trust bar — below hero, above destinations */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <TrustBar />
         </div>
 
-        {/* Popular destinations */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <PopularDestinations />
         </div>
 
-        {/* Flight results — only visible after a search */}
         <ResultsSection />
       </main>
 
       <Footer />
 
-      {/* Booking modal — rendered at root level to overlay everything */}
       {modalOpen && <BookingModal onClose={handleModalClose} />}
     </div>
   );

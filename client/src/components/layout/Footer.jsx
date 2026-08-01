@@ -53,14 +53,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-av-surface border-t border-av-border mt-auto">
-      {/* Trust bar row */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <TrustBar />
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-av-border" />
-
       {/* Bottom row */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">

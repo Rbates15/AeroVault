@@ -43,8 +43,12 @@ app.get('/api/health', (_req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  // Initialize DB connection and schema on startup
   getDb();
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Production database initialized');
+  }
+
   console.log(`AeroVault server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
