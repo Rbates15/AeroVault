@@ -94,7 +94,7 @@ function reducer(state, action) {
     case 'MY_TRIPS_OPEN':
       return {
         ...state,
-        myTrips: { open: true, loading: false, error: null, booking: null },
+        myTrips: { open: true, loading: false, error: null, booking: null, prefillCode: action.code || '' },
       };
 
     case 'MY_TRIPS_CLOSE':
@@ -192,7 +192,7 @@ export function AppProvider({ children }) {
     deselectFlight:  ()             => dispatch({ type: 'DESELECT_FLIGHT' }),
     setConfirmation: (payload)      => dispatch({ type: 'SET_CONFIRMATION', payload }),
     clearConfirmation:()            => dispatch({ type: 'CLEAR_CONFIRMATION' }),
-    openMyTrips:     ()             => dispatch({ type: 'MY_TRIPS_OPEN' }),
+    openMyTrips:     (code)         => dispatch({ type: 'MY_TRIPS_OPEN', code }),
     closeMyTrips:    ()             => dispatch({ type: 'MY_TRIPS_CLOSE' }),
 
     // Async actions

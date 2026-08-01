@@ -41,9 +41,10 @@ export default function ConfirmationCard({ onClose }) {
   }
 
   function handleMyTrips() {
+    const code = confirmation_code;
     clearConfirmation();
     onClose?.();
-    openMyTrips();
+    openMyTrips(code);
   }
 
   function handlePrint() {

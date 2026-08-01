@@ -7,7 +7,7 @@ import logoSvg from '../../assets/logo.svg';
 // ── My Trips modal ─────────────────────────────────────────────────────────────
 function MyTripsModal({ onClose }) {
   const { myTrips, lookupBooking, closeMyTrips } = useApp();
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(myTrips.prefillCode || '');
   const inputRef = useRef(null);
   const modalId  = 'my-trips-modal-heading';
 
@@ -19,6 +19,13 @@ function MyTripsModal({ onClose }) {
   // autoFocus the input when the modal opens
   useEffect(() => {
     inputRef.current?.focus();
+  }, []);
+
+  // Auto-lookup if opened with a prefilled code
+  useEffect(() => {
+    if (myTrips.prefillCode) {
+      lookupBooking(myTrips.prefillCode);
+    }
   }, []);
 
   // Stable Escape handler
